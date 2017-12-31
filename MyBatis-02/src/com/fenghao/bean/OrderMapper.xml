@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 写Sql语句   -->
+<mapper namespace="com.fenghao.mapper.OrderMapper">
+	
+	<!-- 根据用户id和订单name查询User -->
+	<select id="getUserByIdAndOname" parameterType="QueryVo" resultType="user">
+		select * from user u join orders o on u.id = o.user_id 
+		where u.id=#{user.id} and o.name=#{order.name};
+	</select>
+	
+	<!-- 根据id查询Order -->
+	<select id="getOrderById" parameterType="QueryVo" resultType="order">
+		select * from orders where id = #{id}
+	</select>
+	
+	<!-- 建立Sql查询结果中与Order类中名称不同字段之间的映射关系 -->
+	<resultMap type="order" id="orderResultMap">
+		<id column="id" property="id"/>
+		<result column="user_id" property="userId"/>
+	</resultMap>
+	
+	<select id="getAllOrder" resultMap="orderResultMap">
+		select * from orders;
+	</select>
+	
+	<resultMap type="Order" id="orderAssUser" >
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<!-- 表示Order与User多对一关系 -->
+		<association property="user" javaType="User" >
+			<id column="uid" property="id"/>
+			<result column="username" property="username"/>
+		</association>
+	</resultMap>
+	<select id="getOrderAssUser" parameterType="QueryVo" resultType="OrderAssUser" >
+		select 
+					o.id,
+					o.name,
+					o.user_id,
+					u.id ,
+					u.username
+		from 	orders o left join user u
+		on 		o.user_id = u.id
+	</select>
+	
+	
+	
+	
+	
+</mapper>

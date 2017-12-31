@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 写Sql语句   -->
+<mapper namespace="com.fenghao.mapper.UserMapper">
+	<!-- 查询user表中数据总数 -->
+	<select id="getUserCount" resultType="Integer">
+		<!-- select count(*) from user; -->
+		select count(1) from user;
+	</select>
+	
+	<!-- 根据用户名和性别查询用户 -->
+	<select id="getUserByUsernameAndSex" parameterType="user"  resultType="user">
+		select * from user 
+		<where>
+			<if test="username !=null and username !='' ">
+					and username=#{username} 
+			</if>
+			<if test="sex !=null and sex !='' ">
+					and sex=#{sex}
+			</if>
+		</where>
+	</select>
+	<!-- 根据ids查询多个User -->
+	<select id="getUserByIds" parameterType="QueryVo" resultType="user">
+		select * from user where id in
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+	
+	<resultMap type="User" id="userAssOrder">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		
+		<!-- 与Order表示一对多关系 -->
+		<collection property="orderSet" ofType="Order"  >
+			
+			<id column="oid" property="id"/>
+			<result column="name" property="name"/>
+		</collection>
+	</resultMap>
+	<!-- 查询User，且查询关联的Order -->	
+	<select id="getUserAssOrder" resultMap="userAssOrder">
+		select 
+			u.id,
+			u.username,
+			o.id oid,
+			o.name
+		from user u left join orders o 
+		on u.id = o.user_id; 
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
